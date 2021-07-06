@@ -1,6 +1,5 @@
 //
 //  EmojiCategory.swift
-//  EmojiKeyboardDemo
 //
 //  Created by Mihai Petrenco on 7/1/21.
 //
@@ -18,6 +17,9 @@ enum EmojiCategoryType: String, CaseIterable {
     case symbols = "Symbols"
     case flags = "Flags"
     
+    /**
+     * A property for fetching the correct asset name for each Emoji category.
+     */
     var iconName: String {
         switch self {
         case .smileysAndEmotion:
@@ -43,7 +45,14 @@ enum EmojiCategoryType: String, CaseIterable {
 }
 
 struct EmojiCategory: Hashable {
+    
+    /**
+     * The category title.
+     */
     let title: String
-    let type: EmojiCategoryType
+    
+    /**
+     * A list of Emoji instances that are part of this category.
+     */
     let emojis: [Emoji]
 }

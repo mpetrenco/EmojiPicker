@@ -1,8 +1,7 @@
 //
 //  Array+Additions.swift
-//  HabitApp
 //
-//  Created by Mihai Petrenco on 6/27/21.
+//  Created by Mihai Petrenco on 7/5/21.
 //
 
 import Foundation

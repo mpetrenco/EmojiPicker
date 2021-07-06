@@ -1,6 +1,5 @@
 //
 //  EmojiCategoryView.swift
-//  EmojiKeyboardDemo
 //
 //  Created by Mihai Petrenco on 7/1/21.
 //
@@ -12,15 +11,39 @@ private struct Constants {
     static let horizontalSpacing: CGFloat = 16.0
     static let verticalSpacing: CGFloat = 8.0
     static let emojiSize: CGFloat = 32.0
+    static let scrollableAreaHeight: CGFloat = 250.0
 }
 
 struct EmojiCategoryView: View {
     
+    /**
+     * The emoji category to be displayed.
+     */
     private let category: EmojiCategory
+    
+    /**
+     * A callback used to notify that a new emoji column has become visible.
+     */
     var onVisible: ((String) -> Void)?
+    
+    /**
+     * A callback used to notify that a new emoji column has become hidden.
+     */
     var onHidden: ((String) -> Void)?
+    
+    /**
+     * A callback used to notify that an emoji has been selected.
+     */
     var onEmojiSelection: ((Emoji) -> Void)?
     
+    /**
+     * A convenience initializer used to set up the EmojiCategoryView instance.
+     *
+     * - Parameter category: the emoji category to be displayed.
+     * - Parameter onVisible: a callback used to notify that a new emoji column has become visible.
+     * - Parameter onHidden: a callback used to notify that a new emoji column has become hidden.
+     * - Parameter onEmojiSelection: a convenience initializer used to set up the EmojiCategoryView instance.
+     */
     init(with category: EmojiCategory,
          onVisible: ((String) -> Void)? = nil,
          onHidden: ((String) -> Void)? = nil,
@@ -32,6 +55,9 @@ struct EmojiCategoryView: View {
         self.onEmojiSelection = onEmojiSelection
     }
     
+    /**
+     * The main rendering body.
+     */
     var body: some View {
         LazyHStack(alignment: .top, spacing: Constants.horizontalSpacing) {
             
@@ -40,7 +66,9 @@ struct EmojiCategoryView: View {
             ForEach(rows, id: \.self) { emojiRow in
                 
                 LazyVStack(spacing: Constants.verticalSpacing) {
+                    
                     ForEach(emojiRow, id: \.self) { emoji in
+                        
                         Text(emoji.emoji)
                             .font(.system(size: Constants.emojiSize))
                             .onTapGesture {
@@ -56,6 +84,6 @@ struct EmojiCategoryView: View {
                 }
             }
         }
-        .frame(height: 250)
+        .frame(height: Constants.scrollableAreaHeight)
     }
 }

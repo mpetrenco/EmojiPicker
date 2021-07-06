@@ -1,11 +1,14 @@
 //
 //  EmojiView.swift
-//  EmojiKeyboardDemo
 //
 //  Created by Mihai Petrenco on 7/3/21.
 //
 
 import SwiftUI
+
+private struct Constants {
+    static let bottomPadding: CGFloat = 25.0
+}
 
 struct EmojiView: View {
     
@@ -13,13 +16,26 @@ struct EmojiView: View {
      * The current section title.
      */
     @State var title = ""
+    
+    /**
+     * The title to replace the current section title, once no emojis from the previous categories are visible.
+     */
     @State var replacementTitle = ""
+    
+    /**
+     * The current emoji category index.
+     */
     @State var currentCategoryIndex = 0
     
+    /**
+     * A callback used to notify that an emoji has been selected.
+     */
     var onEmojiSelection: ((Emoji) -> Void)?
     
     /**
-     * Override the initializer to disable the internal scroll view's bounce behavior.
+     * Overrides the default initializer to disable the internal scroll view's bounce behavior.
+     *
+     * - Parameter onEmojiSelection - a callback used to notify that an emoji has been selected.
      */
     init(onEmojiSelection: ((Emoji) -> Void)?) {
         self.onEmojiSelection = onEmojiSelection
@@ -27,35 +43,33 @@ struct EmojiView: View {
     }
     
     /**
-     * A convenience property for mapping all emoji categories into their respective [EmojiCategoryView] views.
+     * The main rendering body.
      */
-    private var categoryViews = EmojiRepository.shared.categories.map { category in
-        EmojiCategoryView(with: category)
-    }
-    
     var body: some View {
         
-        // The ScrollViewReader allows us to use the [proxy] property and programatically
-        // scroll to our desired emoji category.
         ScrollViewReader { proxy in
             
-            // The section title view section.
             EmojiCategoryTitleView(title: title)
             
-            // The main scrollable emoji section
             EmojiCategoryScrollView(title: $title,
                                     replacementTitle: $replacementTitle,
                                     onEmojiSelection: onEmojiSelection) { newCategoryIndex in
                 currentCategoryIndex = newCategoryIndex;
             }
             
-            // The emoji category picker
             EmojiCategoryPickerView(currentIndex: $currentCategoryIndex) { selectedIndex in
                 replacementTitle = EmojiCategoryType.allCases[selectedIndex].rawValue
                 title = replacementTitle
                 proxy.scrollTo(selectedIndex, anchor: .leading)
             }
         }
-        .padding(.bottom, 25.0)
+        .padding(.bottom, Constants.bottomPadding)
+    }
+    
+    /**
+     * A convenience property for mapping all emoji categories into their respective [EmojiCategoryView] views.
+     */
+    private var categoryViews = EmojiRepository.shared.categories.map { category in
+        EmojiCategoryView(with: category)
     }
 }

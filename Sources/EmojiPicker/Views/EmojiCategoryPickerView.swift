@@ -1,6 +1,5 @@
 //
 //  EmojiCategoryPickerView.swift
-//  EmojiKeyboardDemo
 //
 //  Created by Mihai Petrenco on 7/3/21.
 //
@@ -14,10 +13,19 @@ private struct Constants {
 
 struct EmojiCategoryPickerView: View {
     
+    /**
+     * A binding used to represent the currently selected category index.
+     */
     @Binding var currentIndex: Int
     
+    /**
+     * A callback used to notify that the user has selected a category.
+     */
     let onCategorySelection: (Int) -> Void
     
+    /**
+     * The main rendering body.
+     */
     var body: some View {
         HStack(spacing: Constants.horizontalSpacing) {
             ForEach(EmojiCategoryType.allCases.indices, id: \.self) { categoryIndex in
@@ -27,7 +35,7 @@ struct EmojiCategoryPickerView: View {
                     if (categoryIndex == currentIndex) {
                         Circle()
                             .foregroundColor(Color.tertiarySurface)
-                            .frame(width: 24.0, height: 24.0)
+                            .frame(width: Constants.categoryItemSize, height: Constants.categoryItemSize)
                     }
                     
                     Button(
