@@ -1,7 +1,7 @@
 # EmojiPicker
 
 <p align="center">
-<img src="https://iili.io/dlwAuSV.md.png" alt="Demo of the Emoji Picker UI.">
+<img src="https://iili.io/dlORHX9.md.png" alt="Demo of the Emoji Picker UI.">
 </p>
 
 <p align="center">
