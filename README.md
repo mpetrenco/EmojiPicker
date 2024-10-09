@@ -27,21 +27,24 @@ __STEP 2:__
 Add the `.emojiPicker(isDisplayed:onEmojiSelected:)` modifier to your view:
 
 ```swift
-struct MyView: View {
-
-  @State var emojiValue = ""
-  @State var isDisplayed = false
-
-  var body {
-    VStack {
-      Text(emojiValue)
-      Button("Select Emoji") {
-        isDisplayed.toggle()
-      }
+struct ContentView: View {
+    
+    @State var emojiValue = ""
+    @State var isDisplayed = false
+    
+    var body: some View {
+        VStack {
+            Text(emojiValue)
+            Button("Select Emoji") {
+                isDisplayed.toggle()
+            }
+        }
+        .emojiPicker(isDisplayed: $isDisplayed) { emoji in
+            emojiValue = emoji.value
+        }
     }
-    .emojiPicker(isDisplayed: $isDisplayed) { emoji in
-      emojiText = emoji.value
-    }
-  }
 }
 ```
+
+__NOTE:__  
+> The Emoji Picker slides from the bottom of your current view. Please ensure that your view takes up the whole height of the screen.
