@@ -8,9 +8,11 @@
 An emoji picker built in SwiftUI, inspired by Apple's emoji keyboard.
 </p>
 
-## Note on Version 2.0:
+## Note on Version 2.1:
 
 With the release of 2.0, I did what I was meaning to do for a long time - add Dark Mode support, remove the stupid navigation bar limitation from 1.0 _(due to my lack of SwiftUI knowledge)_, and improve the overall code quality.
+
+Version 2.1 is focused on overall performance improvements and should enable a smooth scrolling experience. It also adds haptic feedback for emoji/category selection.
 
 As such, I consider this more or less complete from my perspective. The code is licensed under MIT, so feel free to fork it, modify it and make it your own.
 
