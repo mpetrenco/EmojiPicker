@@ -1,29 +1,17 @@
 import SwiftUI
 
 struct EmojiPickerView: View {
-    
-    // MARK: - Constants
-    
-    enum Constant {
-        static let backgroundOpacity = 0.05
-        static let animationDuration = 0.2
-        static let contentHeight = 390.0
-        static let scrollHeight = 230.0
-        static let emojiSize = 40.0
-        static let contentCornerRadius = 16.0
-    }
-    
+
     // MARK: - Properties
     
     private let isDisplayed: Binding<Bool>
-    private let onEmojiSelected: (Emoji) -> Void
     private let categories = EmojiRepository.shared.categories
     private let emojis = EmojiRepository.shared.emojis
+    private let onEmojiSelected: (Emoji) -> Void
     
     // MARK: - Observables
     
     @State private var dragOffset = 0.0
-    @State private var currentCategory: EmojiCategory?
     @State private var sectionTitle = ""
     
     // MARK: - Initializers
@@ -44,7 +32,7 @@ struct EmojiPickerView: View {
             contentView
         }
         .animation(
-            .easeIn(duration: Constant.animationDuration),
+            .easeIn(duration: Size.animationDuration),
             value: isDisplayed.wrappedValue
         )
         .ignoresSafeArea()
@@ -55,7 +43,7 @@ extension EmojiPickerView {
     
     private var backgroundOverlay: some View {
         Color.black.ignoresSafeArea()
-            .opacity(isDisplayed.wrappedValue ? Constant.backgroundOpacity : 0.0)
+            .opacity(isDisplayed.wrappedValue ? Size.backgroundOpacity : 0.0)
             .onTapGesture {
                 isDisplayed.wrappedValue.toggle()
             }
@@ -73,48 +61,25 @@ extension EmojiPickerView {
             .foregroundStyle(.EmojiPicker.secondary)
             .padding(.bottom, .medium)
     }
-    
-    private var gridRows: [GridItem] {
-        Array(repeating: GridItem(.fixed(Constant.emojiSize)), count: 5)
-    }
-    
-    private var emojiGridView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHGrid(rows: gridRows, spacing: .medium) {
-                ForEach(emojis) { emoji in
-                    Button(emoji.value) {
-                        onEmojiSelected(emoji)
-                        isDisplayed.wrappedValue.toggle()
-                    }
-                    .font(.EmojiPicker.heading)
-                    .id(emoji)
-                    .onAppear {
-                        sectionTitle = emoji.category
-                    }
-                }
-            }
-            .padding(.horizontal, .medium)
-        }
-        .frame(height: Constant.scrollHeight)
-        .padding(.bottom, .medium)
-    }
-    
-    private func sectionSelectionView(proxy: ScrollViewProxy) -> some View {
+        
+    private var sectionSelectionView: some View {
         HStack(spacing: .zero) {
             ForEach(categories) { category in
                 Spacer()
-                sectionButton(category: category, proxy: proxy)
+                sectionButton(category: category)
             }
             Spacer()
         }
     }
     
-    private func sectionButton(category: EmojiCategory, proxy: ScrollViewProxy) -> some View {
+    private func sectionButton(category: EmojiCategory) -> some View {
         Button(
             action: {
-                withAnimation {
-                    proxy.scrollTo(category.emojis.first, anchor: .leading)
-                }
+                NotificationCenter.default.post(
+                    name: .categorySelected,
+                    object: nil,
+                    userInfo: ["name": category.title]
+                )
             },
             label: {
                 Image(category.iconName, bundle: .module)
@@ -137,23 +102,36 @@ extension EmojiPickerView {
         )
     }
     
+    private func emojiGrid(with width: CGFloat) -> some View {
+        EmojiPickerGridView(
+            with: emojis,
+            width: width,
+            onEmojiAppeared: { emoji in
+                sectionTitle = emoji.category
+            },
+            onEmojiSelected: { emoji in
+                onEmojiSelected(emoji)
+                isDisplayed.wrappedValue.toggle()
+            }
+        )
+        .padding(.bottom, .medium)
+    }
+    
     private var contentView: some View {
-        VStack(spacing: .small) {
-            disclosureIndicatorView
-            sectionTitleText
-            ScrollViewReader { proxy in
-                VStack(spacing: .small) {
-                    emojiGridView
-                    sectionSelectionView(proxy: proxy)
-                }
+        GeometryReader { proxy in
+            VStack(spacing: .small) {
+                disclosureIndicatorView
+                sectionTitleText
+                emojiGrid(with: proxy.size.width)
+                sectionSelectionView
             }
         }
         .padding(.top, .small)
         .padding(.bottom, .extraLarge)
-        .frame(height: Constant.contentHeight)
+        .frame(height: Size.contentHeight)
         .background(.EmojiPicker.background)
-        .offset(y: isDisplayed.wrappedValue ? dragOffset : Constant.contentHeight)
-        .clipShape(RoundedRectangle(cornerRadius: Constant.contentCornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: Size.contentCornerRadius))
+        .offset(y: isDisplayed.wrappedValue ? dragOffset : Size.contentHeight)
         .gesture(
             DragGesture()
                 .onChanged { value in
